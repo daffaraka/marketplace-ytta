@@ -33,8 +33,8 @@ export default function AuthenticatedLayout({ header, children }) {
             title: 'Dashboard & Analitik',
             items: [
                 { name: 'Ringkasan Utama', href: route('dashboard'), icon: LayoutDashboard, active: route().current('dashboard') },
-                { name: 'Laporan Penjualan', href: '#', icon: TrendingUp, active: false },
-                { name: 'Traffic & Keamanan', href: '#', icon: ShieldAlert, active: false },
+                { name: 'Laporan Penjualan', href: route('reports'), icon: TrendingUp, active: route().current('reports') },
+                { name: 'Traffic & Keamanan', href: route('traffic'), icon: ShieldAlert, active: route().current('traffic') },
             ]
         },
         {
@@ -43,43 +43,39 @@ export default function AuthenticatedLayout({ header, children }) {
                 { 
                     name: 'Daftar Pesanan', 
                     icon: ShoppingCart,
-                    submenu: [
-                        { name: 'Verifikasi Pembayaran', href: '#', badge: 1, active: false },
-                        { name: 'Sedang Diproses', href: '#', active: false },
-                        { name: 'Siap Diambil', href: '#', badge: 1, active: false },
-                        { name: 'Semua Pesanan', href: '#', active: false }
-                    ]
+                    href: route('orders'),
+                    active: route().current('orders')
                 },
             ]
         },
         {
             title: 'Katalog & Inventaris',
             items: [
-                { name: 'Daftar Menu', href: '#', icon: Package, active: false },
-                { name: 'Manajemen Stok', href: '#', icon: ClipboardList, active: false },
+                { name: 'Daftar Menu', href: route('catalog'), icon: Package, active: route().current('catalog') },
+                { name: 'Manajemen Stok', href: route('catalog.stock'), icon: ClipboardList, active: route().current('catalog.stock') },
             ]
         },
         {
             title: 'Pelanggan & Loyalitas',
             items: [
-                { name: 'Database Pelanggan', href: '#', icon: Users, active: false },
+                { name: 'Database Pelanggan', href: route('customers'), icon: Users, active: route().current('customers') },
             ]
         },
         {
             title: 'Bot & AI Assistant',
             items: [
                 { name: 'Manajemen AI', icon: Bot, badge: 'New', submenu: [
-                    { name: 'Inbox (Tanya Admin)', href: '#', active: false },
-                    { name: 'Riwayat Chat AI', href: '#', active: false },
-                    { name: 'FAQ & Template', href: '#', active: false },
-                    { name: 'Pengaturan Telegram', href: '#', active: false }
+                    { name: 'Inbox (Tanya Admin)', href: route('bot'), active: route().current('bot') },
+                    { name: 'Riwayat Chat AI', href: route('bot.history'), active: route().current('bot.history') },
+                    { name: 'FAQ & Template', href: route('bot.faq'), active: route().current('bot.faq') },
+                    { name: 'Pengaturan Telegram', href: route('settings'), active: route().current('settings') }
                 ]}
             ]
         },
         {
             title: 'Sistem & Pengaturan',
             items: [
-                { name: 'Pengaturan', href: '#', icon: Settings, active: false },
+                { name: 'Pengaturan', href: route('settings'), icon: Settings, active: route().current('settings') },
             ]
         }
     ];
@@ -120,10 +116,10 @@ export default function AuthenticatedLayout({ header, children }) {
                 {/* Floating Desktop Collapse Toggle */}
                 <button 
                     onClick={() => setIsCollapsed(!isCollapsed)}
-                    className="hidden lg:flex absolute -right-6 top-8 bg-slate-950 border-2 border-white text-blue-500 hover:text-blue-400 hover:bg-slate-900 rounded-full h-12 w-12 shadow-[0_0_20px_rgba(59,130,246,0.4)] items-center justify-center transition-all z-50 group-toggle"
+                    className="hidden lg:flex absolute -right-3.5 top-8 bg-slate-900 border border-slate-700 text-slate-400 hover:text-blue-400 hover:border-blue-500 hover:bg-slate-800 rounded-full h-7 w-7 shadow-md items-center justify-center transition-all z-50"
                     title={isCollapsed ? "Perbesar Sidebar" : "Perkecil Sidebar"}
                 >
-                    {isCollapsed ? <ChevronsRight size={26} strokeWidth={2.5} /> : <ChevronsLeft size={26} strokeWidth={2.5} />}
+                    {isCollapsed ? <ChevronsRight size={16} strokeWidth={2} /> : <ChevronsLeft size={16} strokeWidth={2} />}
                 </button>
 
                 {/* Navigation */}
