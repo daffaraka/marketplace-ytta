@@ -5,7 +5,7 @@ import { ChevronDown, ChevronRight } from 'lucide-react';
 export default function SidebarItem({ item, isCollapsed }) {
     const Icon = item.icon;
     const hasSubmenu = item.submenu && item.submenu.length > 0;
-    
+
     // Check if any submenu is active to auto-expand
     const isSubmenuActive = hasSubmenu && item.submenu.some(sub => sub.active);
     const [isOpen, setIsOpen] = useState(isSubmenuActive);
@@ -18,8 +18,8 @@ export default function SidebarItem({ item, isCollapsed }) {
     };
 
     const baseClass = `flex items-center relative px-3 py-3 rounded-xl text-sm font-semibold transition-all duration-300 group ${isCollapsed ? 'justify-center' : 'justify-between'}`;
-    const activeClass = item.active || isSubmenuActive 
-        ? 'bg-blue-600 text-white shadow-md shadow-blue-600/20' 
+    const activeClass = item.active || isSubmenuActive
+        ? 'bg-blue-600 text-white shadow-md shadow-blue-600/20'
         : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100';
 
     const renderContent = () => (
@@ -30,7 +30,7 @@ export default function SidebarItem({ item, isCollapsed }) {
                     <span className="whitespace-nowrap">{item.name}</span>
                 )}
             </div>
-            
+
             {/* Badges / Chevrons (only visible if not collapsed) */}
             {!isCollapsed && (
                 <div className="flex items-center gap-2">
@@ -55,7 +55,7 @@ export default function SidebarItem({ item, isCollapsed }) {
     return (
         <div className="space-y-1">
             {hasSubmenu ? (
-                <button 
+                <button
                     onClick={toggleOpen}
                     className={`${baseClass} ${activeClass} w-full text-left`}
                     title={isCollapsed ? item.name : undefined}
@@ -63,7 +63,7 @@ export default function SidebarItem({ item, isCollapsed }) {
                     {renderContent()}
                 </button>
             ) : (
-                <Link 
+                <Link
                     href={item.href}
                     className={`${baseClass} ${activeClass}`}
                     title={isCollapsed ? item.name : undefined}
@@ -79,9 +79,8 @@ export default function SidebarItem({ item, isCollapsed }) {
                         <Link
                             key={idx}
                             href={sub.href}
-                            className={`block px-3 py-2 rounded-lg text-xs font-semibold transition-colors ${
-                                sub.active ? 'bg-slate-800 text-white' : 'text-slate-500 hover:text-slate-200 hover:bg-slate-800/50'
-                            }`}
+                            className={`block px-3 py-2 rounded-lg text-xs font-semibold transition-colors ${sub.active ? 'bg-slate-800 text-white' : 'text-slate-500 hover:text-slate-200 hover:bg-slate-800/50'
+                                }`}
                         >
                             {sub.name}
                             {sub.badge && (

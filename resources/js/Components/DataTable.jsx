@@ -1,89 +1,164 @@
-import { Search, FileText, Download, ChevronLeft, ChevronRight, FileSpreadsheet } from 'lucide-react';
+import React, { useState } from 'react';
+import {
+  useReactTable,
+  getCoreRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  getFilteredRowModel,
+  flexRender,
+} from '@tanstack/react-table';
+import { Search, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
 
-export default function DataTable({ title, columns, data, onSeeAll }) {
-    return (
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full">
-            {/* Table Header & Actions */}
-            <div className="p-6 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white">
-                <h3 className="text-lg font-extrabold text-slate-900">{title}</h3>
-                
-                <div className="flex flex-wrap items-center gap-2">
-                    {/* Search */}
-                    <div className="relative">
-                        <input 
-                            type="text" 
-                            placeholder="Cari data..." 
-                            className="pl-9 pr-4 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 w-full sm:w-48 transition-all"
-                        />
-                        <Search size={16} className="absolute left-3 top-2.5 text-slate-400" />
-                    </div>
+export default function DataTable({ columns, data, searchPlaceholder = "Cari data...", title }) {
+  const [sorting, setSorting] = useState([]);
+  const [globalFilter, setGlobalFilter] = useState('');
 
-                    {/* Export Buttons */}
-                    <button className="flex items-center gap-2 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 px-3 py-2 rounded-lg text-sm font-bold border border-emerald-200 transition-colors">
-                        <FileSpreadsheet size={16} />
-                        <span className="hidden sm:inline">Excel</span>
-                    </button>
-                    <button className="flex items-center gap-2 bg-rose-50 text-rose-700 hover:bg-rose-100 px-3 py-2 rounded-lg text-sm font-bold border border-rose-200 transition-colors">
-                        <FileText size={16} />
-                        <span className="hidden sm:inline">PDF</span>
-                    </button>
-                    
-                    {onSeeAll && (
-                        <button onClick={onSeeAll} className="text-sm font-bold text-blue-600 hover:text-blue-700 transition-colors bg-blue-50 hover:bg-blue-100 px-4 py-2 rounded-lg ml-auto sm:ml-0">
-                            Lihat Semua
-                        </button>
-                    )}
-                </div>
-            </div>
+  const table = useReactTable({
+    data,
+    columns,
+    state: {
+      sorting,
+      globalFilter,
+    },
+    onSortingChange: setSorting,
+    onGlobalFilterChange: setGlobalFilter,
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+  });
 
-            {/* Table Content */}
-            <div className="overflow-x-auto flex-1">
-                <table className="w-full text-left border-collapse min-w-[600px]">
-                    <thead>
-                        <tr className="bg-slate-50/50 text-xs uppercase tracking-widest text-slate-500 font-bold border-b border-slate-200">
-                            {columns.map((col, idx) => (
-                                <th key={idx} className={`px-6 py-4 ${col.align === 'right' ? 'text-right' : ''}`}>
-                                    {col.label}
-                                </th>
-                            ))}
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-100">
-                        {data.map((row, rowIdx) => (
-                            <tr key={rowIdx} className="hover:bg-slate-50 transition-colors">
-                                {columns.map((col, colIdx) => (
-                                    <td key={colIdx} className={`px-6 py-5 ${col.align === 'right' ? 'text-right' : ''}`}>
-                                        {col.render ? col.render(row) : row[col.key]}
-                                    </td>
-                                ))}
-                            </tr>
-                        ))}
-                        {data.length === 0 && (
-                            <tr>
-                                <td colSpan={columns.length} className="px-6 py-8 text-center text-sm font-medium text-slate-500">
-                                    Tidak ada data yang ditemukan.
-                                </td>
-                            </tr>
-                        )}
-                    </tbody>
-                </table>
-            </div>
-
-            {/* Pagination Mockup */}
-            <div className="p-4 border-t border-slate-100 flex items-center justify-between bg-slate-50/50">
-                <span className="text-xs font-medium text-slate-500">
-                    Menampilkan <span className="font-bold text-slate-900">1</span> sampai <span className="font-bold text-slate-900">{data.length}</span> dari <span className="font-bold text-slate-900">{data.length}</span> data
-                </span>
-                <div className="flex items-center gap-1">
-                    <button className="p-1 rounded text-slate-400 hover:bg-slate-200 hover:text-slate-700 disabled:opacity-50" disabled>
-                        <ChevronLeft size={18} />
-                    </button>
-                    <button className="w-7 h-7 rounded bg-blue-600 text-white text-xs font-bold flex items-center justify-center">1</button>
-                    <button className="p-1 rounded text-slate-400 hover:bg-slate-200 hover:text-slate-700">
-                        <ChevronRight size={18} />
-                    </button>
-                </div>
-            </div>
+  return (
+    <div className="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden w-full">
+      {/* Search Bar & Title */}
+      <div className="flex flex-col sm:flex-row justify-between items-center p-6 border-b border-gray-100 gap-4">
+        {title && <h2 className="text-xl font-bold text-gray-900">{title}</h2>}
+        <div className="relative w-full max-w-sm ml-auto">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <Search className="h-4 w-4 text-gray-400" />
+          </div>
+          <input
+            type="text"
+            value={globalFilter ?? ''}
+            onChange={(e) => setGlobalFilter(e.target.value)}
+            className="block w-full pl-10 pr-3 py-2 border border-gray-200 rounded-xl leading-5 bg-gray-50 placeholder-gray-400 focus:outline-none focus:bg-white focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors font-medium"
+            placeholder={searchPlaceholder}
+          />
         </div>
-    );
+      </div>
+
+      {/* Table */}
+      <div className="overflow-x-auto">
+        <table className="w-full text-left border-collapse">
+          <thead>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <tr key={headerGroup.id} className="bg-gray-100 border-b border-gray-200 text-sm text-gray-600">
+                {headerGroup.headers.map((header) => (
+                  <th
+                    key={header.id}
+                    className={`py-4 px-6 font-bold uppercase tracking-wider ${
+                      header.column.getCanSort() ? 'cursor-pointer select-none hover:bg-gray-200 transition' : ''
+                    }`}
+                    onClick={header.column.getToggleSortingHandler()}
+                  >
+                    <div className="flex items-center space-x-2">
+                      <span>{flexRender(header.column.columnDef.header, header.getContext())}</span>
+                      {header.column.getCanSort() && (
+                        <div className="flex flex-col">
+                          {{
+                            asc: <ChevronUp className="w-3 h-3 text-blue-600 font-bold" />,
+                            desc: <ChevronDown className="w-3 h-3 text-blue-600 font-bold" />,
+                          }[header.column.getIsSorted()] ?? (
+                            <ChevronDown className="w-3 h-3 text-gray-400" />
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </th>
+                ))}
+              </tr>
+            ))}
+          </thead>
+          <tbody>
+            {table.getRowModel().rows.length > 0 ? (
+              table.getRowModel().rows.map((row) => (
+                <tr key={row.id} className="border-b border-gray-100 even:bg-gray-50 hover:bg-blue-50 transition-colors">
+                  {row.getVisibleCells().map((cell) => (
+                    <td key={cell.id} className="py-4 px-6 text-gray-800 font-medium">
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </td>
+                  ))}
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={columns.length} className="py-12 text-center text-gray-500 font-medium">
+                  Data tidak ditemukan
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Pagination */}
+      <div className="flex flex-col sm:flex-row items-center justify-between px-6 py-4 border-t border-gray-100 gap-4">
+        <div className="flex items-center space-x-3">
+          <span className="text-sm font-semibold text-gray-600">Tampilkan</span>
+          <select
+            value={table.getState().pagination.pageSize}
+            onChange={e => {
+              table.setPageSize(Number(e.target.value))
+            }}
+            className="border border-gray-200 rounded-lg text-sm font-medium focus:ring-blue-500 focus:border-blue-500 py-1.5 pl-3 pr-8 bg-gray-50 cursor-pointer"
+          >
+            {[10, 20, 30, 40, 50].map(pageSize => (
+              <option key={pageSize} value={pageSize}>
+                {pageSize}
+              </option>
+            ))}
+          </select>
+          <span className="text-sm text-gray-500 font-medium">
+            (Total {table.getPrePaginationRowModel().rows.length} baris)
+          </span>
+        </div>
+        
+        <div className="flex items-center space-x-2">
+          <button
+            onClick={() => table.setPageIndex(0)}
+            disabled={!table.getCanPreviousPage()}
+            className="p-1.5 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition"
+          >
+            <ChevronsLeft className="w-5 h-5 text-gray-600" />
+          </button>
+          <button
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+            className="p-1.5 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition"
+          >
+            <ChevronLeft className="w-5 h-5 text-gray-600" />
+          </button>
+          
+          <span className="text-sm font-bold text-gray-700 mx-2 bg-gray-100 px-3 py-1 rounded-md">
+            Hal {table.getState().pagination.pageIndex + 1} / {table.getPageCount()}
+          </span>
+
+          <button
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+            className="p-1.5 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition"
+          >
+            <ChevronRight className="w-5 h-5 text-gray-600" />
+          </button>
+          <button
+            onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+            disabled={!table.getCanNextPage()}
+            className="p-1.5 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition"
+          >
+            <ChevronsRight className="w-5 h-5 text-gray-600" />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 }
