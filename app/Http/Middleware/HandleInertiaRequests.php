@@ -38,6 +38,10 @@ class HandleInertiaRequests extends Middleware
                     'email' => 'admin@yttamarket.com',
                 ],
             ],
+            'flash' => [
+                'success' => fn () => $request->session()->get('success'),
+                'error' => fn () => $request->session()->get('error'),
+            ],
         ];
     }
 }
